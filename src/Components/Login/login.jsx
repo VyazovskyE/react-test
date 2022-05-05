@@ -1,26 +1,27 @@
 import React from "react";
 import { useState } from "react";
 import "./form.scss";
+import { useContext } from "react";
+import AuthContext from "../../context/authContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
+
 
   function submit(event) {
     event.preventDefault();
 
-    var ID = () => {
-      let array = new Uint32Array(8);
-      window.crypto.getRandomValues(array);
-      let str = "";
-      for (let i = 0; i < array.length; i++) {
-        str += (i < 2 || i > 5 ? "" : "-") + array[i].toString(16).slice(-4);
-      }
-      return str;
-    };
-    localStorage.setItem("email", email);
-    localStorage.setItem("password", password);
-    localStorage.setItem("ID", ID());
+    // TODO: Validate email and password
+    const id = '123123'
+
+    console.log('submit')
+
+    login(id);
+    navigate('/dashboard')
   }
 
   return (
