@@ -1,6 +1,5 @@
 import React from "react";
 import "../Login/form.scss";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
@@ -10,7 +9,6 @@ export default function SignIn() {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm({
     defaultValues: {
       email: "",
@@ -30,33 +28,28 @@ export default function SignIn() {
   };
 
   function onSubmit(data) {
-    if (!localStorage.getItem("user")) {
-      const users = [];
-      const user = {
-        id: generateId(),
-        password: data.password,
-        email: data.email,
-      };
-      users.push(user);
-      localStorage.setItem("user", JSON.stringify(users));
-      reset();
-    } else if (localStorage.getItem("user")) {
-      const users = JSON.parse(localStorage.getItem("user"));
-      for (let i = 0; i < users.length; i++) {
-        if (users[i].id !== generateId() && users[i].email !== data.email) {
-          const user = {
-            id: generateId(),
-            password: data.password,
-            email: data.email,
-          };
-          users.push(user);
-          localStorage.setItem("user", JSON.stringify(users));
-          reset();
-        } else {
-          console.log('Users has same user');
-        }
-      }
+    const savedUsers = localStorage.getItem("users");
+
+    const users = savedUsers ? JSON.parse(savedUsers) : [];
+
+    const isNew = users.every((user) => user.email !== data.email);
+
+    if (!isNew) {
+      alert("User already exists");
+      navigate('/login');
+      return;
     }
+
+    const user = {
+      id: generateId(),
+      password: data.password,
+      email: data.email,
+    };
+
+    users.push(user);
+
+    localStorage.setItem("users", JSON.stringify(users));
+    navigate('/login');
   }
 
   return (
