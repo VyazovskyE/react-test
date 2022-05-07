@@ -1,12 +1,12 @@
 import React from "react";
 import "./App.css";
-import Navigation from "./Components/Navigation/navigation";
-import Login from "./Components/Login/login";
-import Registration from "./Components/signIn/signIn";
+import Navigation from "./components/Navigation/navigation.jsx";
+import Login from "./components/Login/login";
+import Registration from "./components/signIn/signIn";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import AuthProvider from "./Components/Auth/auth";
-import RequireAuth from "./Components/Auth/RequireAuth";
-import Dashboard from "./Components/Dashboard/dashboard";
+import AuthProvider from "./components/Auth/auth";
+import RequireAuth from "./components/Auth/RequireAuth";
+import Dashboard from "./components/dashboard/dashboard";
 
 function App() {
   return (
