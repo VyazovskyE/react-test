@@ -5,12 +5,12 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 export default function SignIn() {
-  const navigate = useNavigate('')
+  const navigate = useNavigate("");
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset
+    reset,
   } = useForm({
     defaultValues: {
       email: "",
@@ -29,16 +29,34 @@ export default function SignIn() {
     return str;
   };
 
-  function Save(string = "", value) {
-    localStorage.setItem(string, value);
-  }
-
   function onSubmit(data) {
-    Save("email", data.email);
-    Save("password", data.password);
-    Save("id", generateId());
-    reset()
-    navigate('/login')
+    if (!localStorage.getItem("user")) {
+      const users = [];
+      const user = {
+        id: generateId(),
+        password: data.password,
+        email: data.email,
+      };
+      users.push(user);
+      localStorage.setItem("user", JSON.stringify(users));
+      reset();
+    } else if (localStorage.getItem("user")) {
+      const users = JSON.parse(localStorage.getItem("user"));
+      for (let i = 0; i < users.length; i++) {
+        if (users[i].id !== generateId() && users[i].email !== data.email) {
+          const user = {
+            id: generateId(),
+            password: data.password,
+            email: data.email,
+          };
+          users.push(user);
+          localStorage.setItem("user", JSON.stringify(users));
+          reset();
+        } else {
+          console.log('Users has same user');
+        }
+      }
+    }
   }
 
   return (
@@ -79,7 +97,11 @@ export default function SignIn() {
               <p>{errors?.password?.message || "This is required"}</p>
             )}
           </div>
-            <input type='submit' className='content-wrapp__button' value='Sign In'/>
+          <input
+            type="submit"
+            className="content-wrapp__button"
+            value="Sign In"
+          />
         </form>
       </div>
     </div>

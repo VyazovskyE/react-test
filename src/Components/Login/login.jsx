@@ -4,17 +4,13 @@ import "./form.scss";
 import { useContext } from "react";
 import AuthContext from "../../context/authContext";
 import { useNavigate } from "react-router-dom";
-<<<<<<< HEAD
 import { useForm } from "react-hook-form";
-=======
->>>>>>> 59a5a6ac0668e4b81215c280317ddb5c5f281934
 
 export default function Login() {
   // const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
-<<<<<<< HEAD
   const {
     register,
     handleSubmit,
@@ -22,32 +18,21 @@ export default function Login() {
     reset,
   } = useForm({
     defaultValues: {
-      email: '',
-      password: ''
-    }
+      email: "",
+      password: "",
+    },
   });
 
-  const getEmail = localStorage.getItem('email')
-
-  console.log(getEmail);
-=======
-
->>>>>>> 59a5a6ac0668e4b81215c280317ddb5c5f281934
-
   function submit(event) {
-
-<<<<<<< HEAD
     console.log("submit");
 
-=======
     // TODO: Validate email and password
-    const id = '123123'
+    const id = "123123";
 
-    console.log('submit')
+    console.log("submit");
 
     login(id);
-    navigate('/dashboard')
->>>>>>> 59a5a6ac0668e4b81215c280317ddb5c5f281934
+    navigate("/dashboard");
   }
 
   return (
@@ -74,7 +59,11 @@ export default function Login() {
               required: "This is required",
             })}
           />
-          <input className='content-wrapp__button' type='submit' value='Log In'/>
+          <input
+            className="content-wrapp__button"
+            type="submit"
+            value="Log In"
+          />
         </form>
       </div>
     </div>
