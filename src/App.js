@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AuthProvider from "./components/Auth/auth";
 import RequireAuth from "./components/Auth/RequireAuth";
 import Dashboard from "./components/dashboard/dashboard";
+import PublicOnly from "./components/Auth/publicOnly";
 
 function App() {
   return (
@@ -16,8 +17,8 @@ function App() {
           <Navigation></Navigation>
           <h1>This is a password manager App</h1>
           <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/signin" element={<Registration />} />
+            <Route path="/login" element={<PublicOnly><Login /></PublicOnly>} />
+            <Route path="/signin" element={<PublicOnly><Registration /></PublicOnly>} />
             {/* <Route path="*" element={<Error />} /> */}
             <Route
               path="/dashboard"
