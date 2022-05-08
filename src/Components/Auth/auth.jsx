@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AuthContext from "../../context/authContext";
 
 export default function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+  const savedUser = localStorage.getItem("user");
+  const [user, setUser] = useState(savedUser);
 
   const saveUser = (user) => {
     localStorage.setItem("user", user);
@@ -15,14 +16,8 @@ export default function AuthProvider({ children }) {
 
   const logout = () => {
     setUser(null);
+    localStorage.removeItem("user");
   };
-
-  useEffect(() => {
-    const user = localStorage.getItem("user");
-    if (user) {
-      setUser(user);
-    }
-  }, []);
 
   const value = {
     user,

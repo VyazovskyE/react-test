@@ -1,124 +1,136 @@
-import React from "react";
-import "./dashboard.scss";
-import { useForm } from "react-hook-form";
+import React, { useContext, useEffect, useState } from 'react';
+import './dashboard.scss';
+import { useForm } from 'react-hook-form';
+import AuthContext from '../../context/authContext';
+import DashboardItem from './dashboard-item';
+
+const keyGenerator = () => {
+	let array = new Uint32Array(8);
+	window.crypto.getRandomValues(array);
+	let str = '';
+	for (let i = 0; i < array.length; i++) {
+		str += (i < 2 || i > 5 ? '' : '-') + array[i].toString(16).slice(-2);
+	}
+	return str;
+};
 
 export default function Dashboard() {
-  const { register, handleSubmit, reset } = useForm({
-    defaultValues: {
-      name: "",
-      password: "",
-      name2: "",
-      password2: ""
-    },
-  });
+	const { user } = useContext(AuthContext);
+	const [items, setItems] = useState([]);
+	const { register, handleSubmit, reset } = useForm({
+		defaultValues: {
+			name: '',
+			password: '',
+		},
+	});
 
-  const keyGenerator = () => {
-    let array = new Uint32Array(8);
-    window.crypto.getRandomValues(array);
-    let str = "";
-    for (let i = 0; i < array.length; i++) {
-      str += (i < 2 || i > 5 ? "" : "-") + array[i].toString(16).slice(-2);
-    }
-    return str;
-  };
+	useEffect(() => {
+		const savedItems = localStorage.getItem(`${user}-items`);
+		if (savedItems) {
+			setItems(JSON.parse(savedItems));
+		}
+	}, [user]);
 
-  const user = localStorage.getItem("user");
+	const updateStorage = (items) => {
+		localStorage.setItem(`${user}-items`, JSON.stringify(items));
+	};
 
-  const savedItems = localStorage.getItem(`${user}items`);
+	function addNewItem(data) {
+		const newItem = items.every((item) => item.name !== data.name);
 
-  function addNewItem(data) {
-    const items = savedItems ? JSON.parse(savedItems) : [];
+		if (!newItem) {
+			alert('Item already exists');
+			return;
+		}
 
-    const newItem = items.every(
-      (item) => item.name !== data.name && item.id !== data.id
-    );
+		if (data.name === '' || data.password === '') {
+			alert('Please fill in all fields');
+			return;
+		}
 
-    if (!newItem) {
-      alert("Item already exists");
+		const item = {
+			name: data.name,
+			password: data.password,
+			id: keyGenerator(),
+		};
+
+		const newItems = [...items, item];
+
+		setItems(newItems);
+		updateStorage(newItems);
+		reset();
+	}
+
+	const handleEdit = (item) => {
+
+    const uniqueName = items.every((i) => i.name !== item.name);
+
+    if (!uniqueName) {
+      alert('Item already exists');
       return;
     }
 
-    const item = {
-      name: data.name,
-      password: data.password,
-      id: keyGenerator(),
-    };
+		const currentItems = [...items];
 
-    (item.name && item.password) !== ""
-      ? items.push(item)
-      : alert("Please write something at name");
-    localStorage.setItem(`${user}items`, JSON.stringify(items));
-    reset();
-  }
+		const index = currentItems.findIndex((i) => i.id === item.id);
 
-  function editItem(data) {
-    const items = JSON.parse(savedItems);
-    const item = {
-      name: items.name,
-      password: items.password,
-    };
+		currentItems[index].name = item.name ? item.name : currentItems[index].name;
+    currentItems[index].password = item.password ? item.password : currentItems[index].password;
 
-      item.name = data.name2;
-      item.password = data.password2;
-      console.log(items);
+		setItems(currentItems);
+		updateStorage(currentItems);
+	};
 
-    items.push(item)
-  }
+	const handleDelete = (item) => {
+		const currentItems = items.filter((i) => i.id !== item.id);
 
+		setItems(currentItems);
+		updateStorage(currentItems);
+	};
 
-  const getItems = savedItems ? JSON.parse(savedItems) : [""];
-
-  const ElementsCreate = getItems.map((item) =>
-    getItems ? (
-      <div key={keyGenerator} className="container" id={item.id}>
-        <p>{item.name}</p>
-        <p>{item.password}</p>
-        <form onSubmit={handleSubmit(editItem)}>
-          <input type="text" placeholder="Edit name" {...register("name2")} />
-          <input
-            type="text"
-            placeholder="Edit password"
-            {...register("password2")}
-          />
-          <button type="submit">Save</button>
-        </form>
-        <button id={item.id}>Delete</button>
-      </div>
-    ) : (
-      alert("You dont have any elements, create new!")
-    )
-  );
-
-  return (
-    <div className="dashboard-wrapp">
-      <div className="form-wrapp">
-        <form
-          action="submit"
-          className="form"
-          onSubmit={handleSubmit(addNewItem)}
-        >
-          <input
-            type="text"
-            className="form__input"
-            name="name"
-            placeholder="Enter name of your tab"
-            {...register("name")}
-          />
-          <input
-            type="password"
-            className="form__input"
-            name="password"
-            placeholder="Enter password of your tab"
-            {...register("password")}
-          />
-          <input
-            type="submit"
-            value="Add new item"
-            className="form__button--add"
-          />
-        </form>
-      </div>
-      <div className="items-container">{ElementsCreate}</div>
-    </div>
-  );
+	return (
+		<div className='dashboard-wrapp'>
+			<div className='form-wrapp'>
+				<form
+					action='submit'
+					className='form'
+					onSubmit={handleSubmit(addNewItem)}
+				>
+					<input
+						type='text'
+						className='form__input'
+						name='name'
+						placeholder='Enter name of your tab'
+						{...register('name')}
+					/>
+					<input
+						type='password'
+						className='form__input'
+						name='password'
+						placeholder='Enter password of your tab'
+						{...register('password')}
+					/>
+					<input
+						type='submit'
+						value='Add new item'
+						className='form__button--add'
+					/>
+				</form>
+			</div>
+			<div className='items-container'>
+				{items.length > 0 ? (
+					items.map((item) => (
+						<DashboardItem
+							item={item}
+							key={item.id}
+							onEdit={handleEdit}
+							onDelete={handleDelete}
+						/>
+					))
+				) : (
+					<p>No items yet</p>
+				)}
+			</div>
+		</div>
+	);
 }
