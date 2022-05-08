@@ -1,11 +1,11 @@
 import React from "react";
 import "./App.css";
-import Navigation from "./components/navigation/navigation";
-import Login from "./components/login/login";
+import Navigation from "./components/Navigation/navigation.jsx";
+import Login from "./components/Login/login";
 import Registration from "./components/signIn/signIn";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import AuthProvider from "./components/auth/auth";
-import RequireAuth from "./components/auth/RequireAuth";
+import AuthProvider from "./components/Auth/auth";
+import RequireAuth from "./components/Auth/RequireAuth";
 import Dashboard from "./components/dashboard/dashboard";
 
 function App() {

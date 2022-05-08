@@ -1,5 +1,5 @@
 import React from "react";
-import "../signIn/signIn.scss";
+import "../Login/form.scss";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
@@ -8,7 +8,7 @@ export default function SignIn() {
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
   } = useForm({
     defaultValues: {
       email: "",
