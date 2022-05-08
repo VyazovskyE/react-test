@@ -1,12 +1,12 @@
 import React from "react";
 import "./App.css";
-import Navigation from "./Components/Navigation/navigation";
-import Login from "./Components/Login/login";
-import Registration from "./Components/signIn/signIn";
+import Navigation from "./components/navigation/navigation";
+import Login from "./components/login/login";
+import Registration from "./components/signIn/signIn";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import AuthProvider from "./Components/Auth/auth";
-import RequireAuth from "./Components/Auth/RequireAuth";
-import Dashboard from "./Components/Dashboard/dashboard";
+import AuthProvider from "./components/auth/auth";
+import RequireAuth from "./components/auth/RequireAuth";
+import Dashboard from "./components/dashboard/dashboard";
 
 function App() {
   return (
@@ -14,6 +14,7 @@ function App() {
       <Router>
         <div className="App">
           <Navigation></Navigation>
+          <h1>This is a password manager App</h1>
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/signin" element={<Registration />} />

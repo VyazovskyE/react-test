@@ -1,5 +1,4 @@
 import React from "react";
-import { useState } from "react";
 import "./form.scss";
 import { useContext } from "react";
 import AuthContext from "../../context/authContext";
@@ -7,15 +6,11 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
 export default function Login() {
-  // const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
   const {
     register,
     handleSubmit,
-    formState: { errors },
-    reset,
   } = useForm({
     defaultValues: {
       email: "",
@@ -23,15 +18,17 @@ export default function Login() {
     },
   });
 
-  function submit(event) {
-    console.log("submit");
+  function submit(data) {
+    const savedUsers = localStorage.getItem("users");
+    const users = savedUsers ? JSON.parse(savedUsers) : [];
 
-    // TODO: Validate email and password
-    const id = "123123";
+    const user = users.find((user) => user.email === data.email && user.password === data.password);
+    if (!user) {
+      alert("Email or password is incorrect");
+      return;
+    }
 
-    console.log("submit");
-
-    login(id);
+    login(user.id);
     navigate("/dashboard");
   }
 

@@ -1,6 +1,5 @@
 import React from "react";
-import "../Login/form.scss";
-import { useState } from "react";
+import "../signIn/signIn.scss";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
@@ -9,8 +8,7 @@ export default function SignIn() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
-    reset,
+    formState: { errors }
   } = useForm({
     defaultValues: {
       email: "",
@@ -30,41 +28,36 @@ export default function SignIn() {
   };
 
   function onSubmit(data) {
-    if (!localStorage.getItem("user")) {
-      const users = [];
-      const user = {
-        id: generateId(),
-        password: data.password,
-        email: data.email,
-      };
-      users.push(user);
-      localStorage.setItem("user", JSON.stringify(users));
-      reset();
-    } else if (localStorage.getItem("user")) {
-      const users = JSON.parse(localStorage.getItem("user"));
-      for (let i = 0; i < users.length; i++) {
-        if (users[i].id !== generateId() && users[i].email !== data.email) {
-          const user = {
-            id: generateId(),
-            password: data.password,
-            email: data.email,
-          };
-          users.push(user);
-          localStorage.setItem("user", JSON.stringify(users));
-          reset();
-        } else {
-          console.log('Users has same user');
-        }
-      }
+    const savedUsers = localStorage.getItem("users");
+
+    const users = savedUsers ? JSON.parse(savedUsers) : [];
+
+    const isNew = users.every((user) => user.email !== data.email);
+
+    if (!isNew) {
+      alert("User already exists");
+      navigate('/login');
+      return;
     }
+
+    const user = {
+      id: generateId(),
+      password: data.password,
+      email: data.email,
+    };
+
+    users.push(user);
+
+    localStorage.setItem("users", JSON.stringify(users));
+    navigate('/login');
   }
 
   return (
-    <div className="wrapper">
-      <div className="content-wrapp">
+    <div className="wrapp">
+      <div className="sigIn-wrapp">
         <form onSubmit={handleSubmit(onSubmit)}>
           <input
-            className="content-wrapp__input"
+            className="sigIn-wrapp__input"
             placeholder="Enter your email"
             type="email"
             id="email"
@@ -79,7 +72,7 @@ export default function SignIn() {
             )}
           </div>
           <input
-            className="content-wrapp__input"
+            className="sigIn-wrapp__input"
             placeholder="Enter your password"
             type="password"
             id="password"
@@ -87,8 +80,8 @@ export default function SignIn() {
             {...register("password", {
               required: "This is required",
               minLength: {
-                value: 8,
-                message: "Min length must be 8",
+                value: 5,
+                message: "Min length must be 5",
               },
             })}
           />
@@ -99,7 +92,7 @@ export default function SignIn() {
           </div>
           <input
             type="submit"
-            className="content-wrapp__button"
+            className="sigIn-wrapp__button"
             value="Sign In"
           />
         </form>
